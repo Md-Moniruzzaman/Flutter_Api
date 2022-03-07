@@ -14,18 +14,16 @@ class _HomePageState extends State<HomePage> {
   String stringResponse = '';
   List listResponse = [];
   Map mapResponse = {};
-  Map dataResponse = {};
-  Map dataResponseSupport = {};
 
   Future apiCall() async {
     http.Response response;
-    response = await http.get(Uri.parse('https://reqres.in/api/users/2'));
+    response = await http.get(Uri.parse('https://reqres.in/api/users?page=2'));
     if (response.statusCode == 200) {
       setState(() {
-        // stringResponse = response.body;
+        stringResponse = response.body;
         mapResponse = json.decode(response.body);
-        dataResponse = mapResponse['data'];
-        dataResponseSupport = mapResponse['support'];
+        listResponse = mapResponse['data'];
+        // dataResponseSupport = mapResponse['support'];
       });
     }
   }
@@ -44,29 +42,31 @@ class _HomePageState extends State<HomePage> {
         title: const Center(child: Text('Api Demo')),
         titleSpacing: 1.5,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Center(
-              child: Column(
-                children: [
-                  Image.network(dataResponse['avatar'].toString()),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                      '${dataResponse['first_name'].toString()} ${dataResponse['last_name'].toString()}',
-                      style: const TextStyle(color: Colors.black)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(dataResponseSupport['text'].toString())
-                ],
+      body: ListView.builder(
+        itemCount: listResponse.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.network(listResponse[index]['avatar'].toString()),
               ),
-            ),
-          ),
-        ],
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                  '${listResponse[index]['first_name'].toString()} ${listResponse[index]['last_name'].toString()}',
+                  style: const TextStyle(color: Colors.black)),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(listResponse[index]['email'].toString()),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          );
+        },
       ),
     );
   }
