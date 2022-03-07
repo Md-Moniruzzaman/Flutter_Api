@@ -14,6 +14,8 @@ class _HomePageState extends State<HomePage> {
   String stringResponse = '';
   List listResponse = [];
   Map mapResponse = {};
+  Map dataResponse = {};
+  Map dataResponseSupport = {};
 
   Future apiCall() async {
     http.Response response;
@@ -22,6 +24,8 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         // stringResponse = response.body;
         mapResponse = json.decode(response.body);
+        dataResponse = mapResponse['data'];
+        dataResponseSupport = mapResponse['support'];
       });
     }
   }
@@ -45,8 +49,21 @@ class _HomePageState extends State<HomePage> {
         children: [
           Center(
             child: Center(
-              child: Text(mapResponse['data'].toString(),
-                  style: const TextStyle(color: Colors.black)),
+              child: Column(
+                children: [
+                  Image.network(dataResponse['avatar'].toString()),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                      '${dataResponse['first_name'].toString()} ${dataResponse['last_name'].toString()}',
+                      style: const TextStyle(color: Colors.black)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(dataResponseSupport['text'].toString())
+                ],
+              ),
             ),
           ),
         ],
